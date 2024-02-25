@@ -1,19 +1,81 @@
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View,Image,TouchableWithoutFeedback, TouchableOpacity } from 'react-native';
+import React,{useState} from 'react'
+import { StyleSheet, Text, View,Image,TouchableWithoutFeedback,Dimensions, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import {Icon} from 'react-native-elements';
+const width = Dimensions.get('screen').width
+const height = Dimensions.get('screen').height
 
 export default function SignUp({navigation}) {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [confirmPassword, setConfirmPassword] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [confirmPasswordError, setConfirmPasswordError] = useState('')
+
+  const validateForm = () => {
+      let valid = true
+     // Validate email
+      if (!email.trim()) {
+          setEmailError('Email is required')
+          valid = false
+      } else if (!isValidEmail(email)) {
+          setEmailError('Invalid email format')
+          valid = false
+      } else {
+          setEmailError('')
+      }
+      // Validate password
+      if (!password.trim()) {
+          setPasswordError('Password is required')
+          valid = false
+      } else {
+          setPasswordError('')
+      }
+
+      // Validate confirm password
+      if (!confirmPassword.trim()) {
+        setConfirmPasswordError('Confirm Password is required');
+        valid = false;
+      } else if (password !== confirmPassword) {
+        setConfirmPasswordError('Passwords do not match');
+        valid = false;
+      } else {
+        setConfirmPasswordError('');
+      }
+      return valid;
+    };
+
+  const handleSubmit = () => {
+      if (validateForm()) {
+          // Perform form submission
+          console.log('Form submitted:', email, password)
+      }
+  }
+
+  const isValidEmail = (email) => {
+      // Basic email validation regex
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+      return emailRegex.test(email)
+  };
+
+
   return (
   <View style={styles.container}>
     <StatusBar style="auto" />
     <View style={styles.logo}>
     <Image source={require('../assets/logo.png')} />
     </View>
-    <Text style={{color:'#A5A7AB',fontSize:20,textAlign:'center'}}>Sign up to discover all our movies and enjoy our features.</Text>
+    <Text style={{color:'#A5A7AB',fontSize:17,textAlign:'center'}}>Sign up to discover all our movies and enjoy our features.</Text>
 <View style={styles.input}>
 <TextInput
 label='Email'
+autoCompleteType="email"
+autoCorrect={false}
+value={email}
+onChangeText={setEmail}
+error={!!emailError}
 placeholder='myname@gmail.com'
 mode='offline'
 style={{backgroundColor:'#1F2123'}}
@@ -21,8 +83,12 @@ textColor='white'
 right={<TextInput.Icon icon="email-outline"  color='#FCD22E'/>}
 >
 </TextInput>
+{emailError ? <Text style={styles.error}>{emailError}</Text> : null}
 <TextInput
 label='Password'
+value={password}
+onChangeText={setPassword}
+error={!!passwordError}
 mode='offline'
 style={{backgroundColor:'#1F2123'}}
 secureTextEntry={true}
@@ -30,6 +96,7 @@ textColor='white'
 right={<TextInput.Icon icon="lock-outline" color='#FCD22E' />}
 >
 </TextInput>
+{passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}
 <TextInput
 label ='Confirm Password'
 mode='offline'
@@ -37,14 +104,17 @@ style={{backgroundColor:'#1F2123'}}
 secureTextEntry={true}
 textColor='white'
 right={<TextInput.Icon icon="lock-outline" color='#FCD22E' style={{}}/>}
+value={confirmPassword}
+onChangeText={setConfirmPassword}
+error={!!confirmPasswordError}
 >
 </TextInput>
-
+{confirmPasswordError ? <Text style={styles.error}>{confirmPasswordError}</Text> : null}
  
 </View>
 <View style={styles.button_container}>
-<TouchableOpacity style={{backgroundColor:'#FCD22E',padding:12,marginTop:30,borderRadius:5}} onPress={()=>navigation.navigate('Watch')}>
-    <Text style={{fontSize:17,textAlign:'center'}}>Sign Up</Text>
+<TouchableOpacity  onPress={handleSubmit} style={{backgroundColor:'#FCD22E',padding:12,marginTop:30,borderRadius:5}}>
+    <Text style={{fontSize:15,textAlign:'center'}}>Sign Up</Text>
    </TouchableOpacity>
 
 <Text style={{color:'white'}}>
@@ -55,11 +125,11 @@ right={<TextInput.Icon icon="lock-outline" color='#FCD22E' style={{}}/>}
 </Text>
 <TouchableOpacity style={styles.apple} onPress={()=>navigation.navigate('Watch')}>
 <Icon name='apple' color='white'/>
-    <Text style={{fontSize:17,textAlign:'center',color:'#fff'}}>Sign up with Apple</Text>
+    <Text style={{fontSize:15,textAlign:'center',color:'#fff'}}>Sign up with Apple</Text>
    </TouchableOpacity>
    <TouchableOpacity style={styles.google} onPress={()=>navigation.navigate('Watch')}>
 <Icon name='google' type='font-awesome' color='green' />
-    <Text style={{fontSize:17,textAlign:'center',color:'#000'}}> Sign up with Google</Text>
+    <Text style={{fontSize:15,textAlign:'center',color:'#000'}}> Sign up with Google</Text>
     </TouchableOpacity>
   <Text style={{color:'white',textAlign:'center'}}>Already have an account? 
    <Text onPress={()=>navigation.navigate('SignIn')} style={{color:'#FCD22E'}} > Sign In</Text> 
@@ -78,8 +148,8 @@ const styles = StyleSheet.create({
     gap:10,
   },
   logo:{
-marginTop:40,
-marginBottom:20,
+marginTop:20,
+marginBottom:15,
   },
 button_container:{
 left:0,
@@ -89,7 +159,7 @@ gap:20,
   },
   input:{
 width:"90%",
-
+gap:5,
   },
 apple:{
   backgroundColor:'#000',
@@ -106,6 +176,11 @@ google:{
   flexDirection:'row',
   justifyContent:'center',
   borderRadius:5
+},
+error: {
+  color: 'red',
+  fontSize: 14,
+  marginTop: 5
 }
 
 });

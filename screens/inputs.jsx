@@ -28,5 +28,10 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '90%', 
+    height:40
   },
+  logo:{
+    marginTop:40,
+    marginBottom:20,
+      },
 })

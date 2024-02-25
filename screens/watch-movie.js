@@ -20,7 +20,7 @@ export default function Watch({navigation}) {
     <Text style={{fontSize:15,textAlign:'center'}} >Watch movie</Text>
    </TouchableOpacity>
    <TouchableOpacity onPress={()=>navigation.navigate('SignUp')}>
-    <Text style={{fontSize:15,color:'white',textAlign:'center'}}>Sign In</Text>
+    <Text style={{fontSize:15,color:'white',textAlign:'center'}}>Sign Up</Text>
    </TouchableOpacity>
    </View>
    </View>
