@@ -4,8 +4,50 @@ import Buttons from './inputs'
 import Input from './inputs'
 import {Icon } from 'react-native-elements'
 
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { useState } from 'react'
+
 
 export default function SignIn({navigation}) {
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+  const [emailError, setEmailError] = useState('')
+  const [passwordError, setPasswordError] = useState('')
+  const [isPasswordSecure, setIsPasswordSecure] = useState(true);
+
+  const validateForm = () => {
+    let valid = true
+   // Validate email
+    if (!email.trim()) {
+        setEmailError('Email is required')
+        valid = false
+    } else if (!isValidEmail(email)) {
+        setEmailError('Invalid email format')
+        valid = false
+    } else {
+        setEmailError('')
+    }
+    // Validate password
+    if (!password.trim()) {
+        setPasswordError('Password is required')
+        valid = false
+    } else {
+        setPasswordError('')
+    }
+  };
+  const isValidEmail = (email) => {
+    // email validation regex
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    return emailRegex.test(email)
+};
+const handleSubmit = async () => {
+  if (validateForm()) {
+      // Perform form submission
+      console.log('Submitted:', email, password)
+      await AsyncStorage.setItem('data','name')
+  }
+}
+
   return (
 <View style={styles.container}>
 <View>
@@ -15,19 +57,32 @@ placeholder='myname@gmail.com'
 mode='outlined'
 style={{backgroundColor:'#1F2123'}}
 textColor='white'
+iconname='email'
+iconname2='check'
+error={!!emailError}
+value={email}
+onChangeText={setEmail}
 />
+{emailError ? <Text style={styles.error}>{emailError}</Text> : null}
 <Input
 label='Password'
 placeholder='Enter your password'
 mode='outlined'
 style={{backgroundColor:'#1F2123'}}
 textColor='white'
-secureTextEntry={true}
+secureTextEntry={isPasswordSecure} 
+onPress={() => setIsPasswordSecure(!isPasswordSecure)}
+iconname='lock'
+iconname2={isPasswordSecure?'eye-off' : 'eye'}
+error={!!passwordError}
+value={password}
+onChangeText={setPassword}
 />
+{passwordError ? <Text style={styles.error}>{passwordError}</Text> : null}
 <Text style={{color:'white',textAlign:'right'}}>
     Forgot password?
 </Text>
-<TouchableOpacity style={{backgroundColor:'#FCD22E',padding:10,margin:15,borderRadius:5}} onPress={()=>navigation.navigate('Watch')}>
+<TouchableOpacity onPress={handleSubmit} style={{backgroundColor:'#FCD22E',padding:10,margin:15,borderRadius:5}} >
     <Text style={{fontSize:15,textAlign:'center'}}>Sign In</Text>
    </TouchableOpacity>
 
@@ -37,7 +92,7 @@ secureTextEntry={true}
 </View>
 <View>
 <View>
-<TouchableOpacity style={{backgroundColor:'#1F2123',padding:10,margin:15,borderRadius:5,borderWidth:1,borderColor:'#C8CACB',display:'flex',flexDirection:'row', justifyContent:'center',}}>
+<TouchableOpacity onPress={()=>navigation.navigate('Watch')} style={{backgroundColor:'#1F2123',padding:10,margin:15,borderRadius:5,borderWidth:1,borderColor:'#C8CACB',display:'flex',flexDirection:'row', justifyContent:'center',}}>
     <Icon name='google' type='font-awesome' color='green' />
     <Text style={{fontSize:15,textAlign:'center',color:'white'}}> Google</Text>
    </TouchableOpacity>
@@ -69,6 +124,12 @@ button_container:{
     justifyContent:'center',
     borderRadius:5
   },
+  error: {
+    color: 'red',
+    fontSize: 14,
+    marginTop: 5
+  },
+  
   google:{
     backgroundColor:'#fff',
     padding:12,

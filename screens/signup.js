@@ -3,6 +3,7 @@ import React,{useState} from 'react'
 import { StyleSheet, Text, View,Image,TouchableWithoutFeedback,Dimensions, TouchableOpacity } from 'react-native';
 import { TextInput } from 'react-native-paper';
 import {Icon} from 'react-native-elements';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 const width = Dimensions.get('screen').width
 const height = Dimensions.get('screen').height
 
@@ -47,20 +48,23 @@ export default function SignUp({navigation}) {
       return valid;
     };
 
-  const handleSubmit = () => {
-      if (validateForm()) {
-          // Perform form submission
-          console.log('Form submitted:', email, password)
-      }
-  }
-
+ 
   const isValidEmail = (email) => {
       // Basic email validation regex
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
       return emailRegex.test(email)
   };
-
-
+  const handleSubmit = async () => {
+    if (validateForm()) {
+        // Perform form submission
+        console.log('Submitted:', email, password)
+        await AsyncStorage.setItem('data','name')
+    }
+}
+const getData= async ()=>{
+  let user_data=await AsyncStorage.getItem('data')
+  console.log (user_data)
+}
   return (
   <View style={styles.container}>
     <StatusBar style="auto" />
